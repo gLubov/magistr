@@ -1,6 +1,6 @@
 # flutter_application_test
 
-A new Flutter project.
+UI for unified authentication authorization system. 
 
 ## Getting Started
 
