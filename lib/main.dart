@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+//import 'package:flutter_application_test/server.dart';
+
+
 
 void main() {
   runApp(MyApp());
@@ -23,14 +27,26 @@ class _LoginPageState extends State<LoginPage> {
   String _password = '';
   bool _authenticated = false;
 
-  void _login() {
-    // Здесь можно реализовать проверку логина и пароля.
-    if (_username == 'username' && _password == 'password') {
+  Future<void> authenticateUser(String login, String password) async {
+    String url = 'http://localhost:8080/';
+
+    Map<String, String> requestBody = {
+      'login': login,
+      'password': password,
+    };
+
+    var response = await http.post(Uri.parse(url), body: requestBody);
+
+    if (response.statusCode == 200) {
       setState(() {
         _authenticated = true;
       });
+    } else {
+      _authenticated = false;
+      // Обработка ошибки аутентификации
     }
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +63,12 @@ class _LoginPageState extends State<LoginPage> {
                     child: Image.asset('asset/head-logo.jpg', /*width: 40, height: 40*/),
                   ),
                 SizedBox(height: 20),
-                Text(
+                const Text(
                 'Единое окно аутентификации и авторизации корпоративной информационной системы',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white, fontSize: 40),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[                                   
@@ -60,13 +76,13 @@ class _LoginPageState extends State<LoginPage> {
                     width: 300,
                     child: Column(
                       children: <Widget>[
-                        Text(
+                        const Text(
                           'Войдите с помощью учетных данных',
                           textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.white), 
                   ),
                         TextFormField(                  
-                          decoration: InputDecoration(                            
+                          decoration: const InputDecoration(                            
                             labelText: 'Логин',
                             fillColor: Colors.white,
                             filled: true,
@@ -75,10 +91,10 @@ class _LoginPageState extends State<LoginPage> {
                             _username = value;
                             },
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         TextFormField(
                           obscureText: true,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             labelText: 'Пароль',
                             fillColor: Colors.white,
                             filled: true,
@@ -86,18 +102,20 @@ class _LoginPageState extends State<LoginPage> {
                               _password = value;
                             },
                         ),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         ElevatedButton(
-                           onPressed: _login,
-                          child: Text('Вход'),
+                           onPressed: () {
+                              authenticateUser(_username,_password);
+                           },
+                          child: const Text('Вход'),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Column(                    
                     children: <Widget>[                        
-                      Text(
+                      const Text(
                         'Или воспользуйтесь внешней информационной системой',
                         style: TextStyle(color: Colors.white),
                       ),
@@ -155,8 +173,8 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Welcome')),
-      body: Center(
+      appBar: AppBar(title:const Text('Welcome')),
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
