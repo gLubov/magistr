@@ -1,6 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-//import 'package:flutter_application_test/server.dart';
+import 'package:flutter_application_test/server.dart';
 
 
 
@@ -27,26 +28,48 @@ class _LoginPageState extends State<LoginPage> {
   String _password = '';
   bool _authenticated = false;
 
-  Future<void> authenticateUser(String login, String password) async {
-    String url = 'http://localhost:8080/';
+  Future<void> postData() async {
+  Uri url = Uri.parse('http://localhost:8080/');
+  Map<String, String> headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': 'localhost', // Добавляем заголовок CORS
+  };
 
-    Map<String, String> requestBody = {
-      'login': login,
-      'password': password,
-    };
+  Map<String, dynamic> data = {
+    'login': 'user',
+    'password': 'password',
+  };
 
-    var response = await http.post(Uri.parse(url), body: requestBody);
+  try {
+    var response = await http.post(
+      url as Uri,
+      headers: headers,
+      body: jsonEncode(data),
+    );
 
     if (response.statusCode == 200) {
-      setState(() {
-        _authenticated = true;
-      });
+      print('Response: ${response.body}');
     } else {
-      _authenticated = false;
-      // Обработка ошибки аутентификации
+      print('Error: ${response.reasonPhrase}');
     }
+  } catch (e) {
+    print('Error: $e');
   }
+}
+Future<void> showTemporaryDialog() async {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Данная функция временно недоступна'),
+      );
+    }
+  );
   
+  await Future.delayed(Duration(seconds: 2)); // Задержка в 2 секунды
+  Navigator.of(context).pop(); // Закрытие диалогового окна
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(height: 10),
                         ElevatedButton(
                            onPressed: () {
-                              authenticateUser(_username,_password);
+                              postData();
                            },
                           child: const Text('Вход'),
                         ),
@@ -127,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                         width: 60.0,
                         height: 60.0),
                         onPressed: () {
-                          // код для авторизации через Вконтакте
+                          showTemporaryDialog();
                         },                        
                       ),
                       IconButton(
@@ -135,7 +158,7 @@ class _LoginPageState extends State<LoginPage> {
                         width: 60.0,
                         height: 60.0),
                         onPressed: () {
-                          // код для авторизации через Одноклассники
+                          showTemporaryDialog();
                         },
                       ),
                        IconButton(
@@ -143,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                         width: 70.0,
                         height: 70.0),
                         onPressed: () {
-                          // код для авторизации через Яндекс
+                          showTemporaryDialog();
                         },
                       ),
                        IconButton(
@@ -151,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
                         width: 70.0,
                         height: 70.0),
                         onPressed: () {
-                          // код для авторизации через ЕСИА
+                          showTemporaryDialog();
                         },
                         ), 
                       ],   
